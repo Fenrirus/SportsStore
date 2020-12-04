@@ -6,6 +6,7 @@
     using Moq;
     using Ninject;
     using SportsStore.Domain.Abstract;
+    using SportsStore.Domain.Concrete;
     using SportsStore.Domain.Entities;
 
     public class NinjectDependencyResolver : IDependencyResolver
@@ -20,13 +21,14 @@
 
         private void AddBindings()
         {
-            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            /*Mock<IProductRepository> mock = new Mock<IProductRepository>();
             mock.Setup(m => m.Products).Returns(new List<Product>{
                 new Product {Name = "Piłka nożna", Price = 25},
                 new Product {Name = "Deska surfingowa", Price = 180},
                 new Product {Name = "But do biegania", Price = 95},
             });
-            kernel.Bind<IProductRepository>().ToConstant(mock.Object);
+            kernel.Bind<IProductRepository>().ToConstant(mock.Object);*/
+            kernel.Bind<IProductRepository>().To<EFProductRepository>();
         }
 
         public object GetService(Type serviceType)
