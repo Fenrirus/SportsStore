@@ -31,13 +31,37 @@ namespace SportsStore.UnitTests
             var controller = new ProductController(mock.Object);
             controller.PageSize = 3;
 
-            var result = (IEnumerable<Product>)controller.List(2).Model;
+            var result = (ProductListViewModel)controller.List(2).Model;
 
-            var arrayProduct = result.ToArray();
+            var arrayProduct = result.Products.ToArray();
 
             Assert.IsTrue(arrayProduct.Length == 2);
             Assert.AreEqual(arrayProduct[0].Name, "P4");
             Assert.AreEqual(arrayProduct[1].Name, "P5");
+        }
+
+        [TestMethod]
+        public void Can_Send_Paggination_View_Model()
+        {
+            var mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]
+            {
+                new Product{ProductId = 1, Name = "P1" },
+                new Product{ProductId = 2, Name = "P2" },
+                new Product{ProductId = 3, Name = "P3" },
+                new Product{ProductId = 4, Name = "P4" },
+                new Product{ProductId = 5, Name = "P5" },
+            });
+
+            var controller = new ProductController(mock.Object);
+            controller.PageSize = 3;
+            var result = (ProductListViewModel)controller.List(2).Model;
+
+            PagingInfo pageInfo = result.PagingInfo;
+            Assert.AreEqual(pageInfo.CurrentPage, 2);
+            Assert.AreEqual(pageInfo.TotalItems, 5);
+            Assert.AreEqual(pageInfo.ItemsPerPage, 3);
+            Assert.AreEqual(pageInfo.TotalPages, 2);
         }
 
         [TestMethod]
