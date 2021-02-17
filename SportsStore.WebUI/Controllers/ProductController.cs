@@ -15,12 +15,21 @@
             repository = productRepository;
         }
 
-        public ViewResult List(int page = 1)
+        public ViewResult List(string category, int page = 1)
         {
             ProductListViewModel model = new ProductListViewModel()
             {
-                Products = repository.Products.OrderBy(o => o.ProductId).Skip((page - 1) * PageSize).Take(PageSize),
-                PagingInfo = new PagingInfo { CurrentPage = page, ItemsPerPage = PageSize, TotalItems = repository.Products.Count() }
+                Products = repository.Products.OrderBy(o => o.ProductId)
+                .Where(w => category == null || w.Category == category)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize),
+                PagingInfo = new PagingInfo
+                {
+                    CurrentPage = page,
+                    ItemsPerPage = PageSize,
+                    TotalItems = category == null ? repository.Products.Count() : repository.Products.Where(w => w.Category == category).Count()
+                },
+                CurrentCategory = category,
             };
 
             return View(model);
